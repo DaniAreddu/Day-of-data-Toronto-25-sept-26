@@ -33,8 +33,8 @@ acceptance_rules:
   - accepted returns are converted with the FX rate of the original order transaction date
 freshness_sla_minutes: 240
 quarantine_rules:
-  - code: NON_POSITIVE_RETURN
-    condition: "return_amount <= 0"
+  - code: INVALID_RETURN_AMOUNT
+    condition: "return_amount IS NULL OR return_amount <= 0"
   - code: RETURN_CURRENCY_MISMATCH
     condition: "returns.currency_code <> orders.currency_code"
 security_classification: Confidential

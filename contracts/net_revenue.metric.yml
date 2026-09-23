@@ -25,7 +25,7 @@ quality_requirements:
   - no duplicate business keys after Silver processing
   - complete transaction-date FX coverage
   - no orphan returns
-  - no missing or unknown dimension keys
+  - no missing or unknown required keys
   - no unsupported currencies
 security_classification: Confidential
 related_metrics:

@@ -1,4 +1,4 @@
-date_key,calendar_date,year,month,day_of_month,year_month,month_name,day_name
+date_key,calendar_date,calendar_year,month_number,day_of_month,year_month,month_name,day_name
 20260801,2026-08-01,2026,8,1,2026-08,August,Saturday
 20260802,2026-08-02,2026,8,2,2026-08,August,Sunday
 20260803,2026-08-03,2026,8,3,2026-08,August,Monday

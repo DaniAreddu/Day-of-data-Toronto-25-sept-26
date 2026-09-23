@@ -533,8 +533,8 @@ def _reference_tables() -> dict[str, tuple[tuple[str, ...], list[dict]]]:
             {
                 "date_key": int(day.strftime("%Y%m%d")),
                 "calendar_date": day,
-                "year": day.year,
-                "month": day.month,
+                "calendar_year": day.year,
+                "month_number": day.month,
                 "day_of_month": day.day,
                 "year_month": day.strftime("%Y-%m"),
                 "month_name": day.strftime("%B"),

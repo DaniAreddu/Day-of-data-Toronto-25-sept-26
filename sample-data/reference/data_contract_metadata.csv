@@ -12,7 +12,7 @@ net_revenue_cad,severity.RETURNS_FRESHNESS,BLOCKING
 net_revenue_cad,severity.DUPLICATE_BUSINESS_KEYS,BLOCKING
 net_revenue_cad,severity.MISSING_FX,BLOCKING
 net_revenue_cad,severity.ORPHAN_RETURNS,BLOCKING
-net_revenue_cad,severity.MISSING_DIMENSION_KEYS,BLOCKING
+net_revenue_cad,severity.MISSING_REQUIRED_KEYS,BLOCKING
 net_revenue_cad,severity.UNSUPPORTED_CURRENCY,BLOCKING
 net_revenue_cad,severity.DUPLICATES_RESOLVED,WARNING
 net_revenue_cad,severity.QUARANTINED_ROWS,WARNING

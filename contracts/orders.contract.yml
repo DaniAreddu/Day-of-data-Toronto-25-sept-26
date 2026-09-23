@@ -38,6 +38,6 @@ freshness_sla_minutes: 240
 quarantine_rules:
   - code: TEST_TRANSACTION
     condition: "customer_segment = 'Internal Test'"
-  - code: NON_POSITIVE_AMOUNT
-    condition: "gross_amount <= 0"
+  - code: INVALID_AMOUNT
+    condition: "gross_amount IS NULL OR gross_amount <= 0"
 security_classification: Confidential
