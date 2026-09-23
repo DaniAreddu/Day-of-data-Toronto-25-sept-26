@@ -1,0 +1,13 @@
+target_month,region_code,category_code,target_cad,approved_by_role,approved_at_utc,source_system
+2026-08,ON,DEV,231300.00,Finance Business Owner (FP&A),2026-07-15T14:00:00Z,finance.planning
+2026-08,ON,ACC,18500.00,Finance Business Owner (FP&A),2026-07-15T14:00:00Z,finance.planning
+2026-08,ON,SVC,78200.00,Finance Business Owner (FP&A),2026-07-15T14:00:00Z,finance.planning
+2026-08,QC,DEV,121000.00,Finance Business Owner (FP&A),2026-07-15T14:00:00Z,finance.planning
+2026-08,QC,ACC,12200.00,Finance Business Owner (FP&A),2026-07-15T14:00:00Z,finance.planning
+2026-08,QC,SVC,55800.00,Finance Business Owner (FP&A),2026-07-15T14:00:00Z,finance.planning
+2026-08,BC,DEV,115700.00,Finance Business Owner (FP&A),2026-07-15T14:00:00Z,finance.planning
+2026-08,BC,ACC,11100.00,Finance Business Owner (FP&A),2026-07-15T14:00:00Z,finance.planning
+2026-08,BC,SVC,46200.00,Finance Business Owner (FP&A),2026-07-15T14:00:00Z,finance.planning
+2026-08,AB,DEV,102300.00,Finance Business Owner (FP&A),2026-07-15T14:00:00Z,finance.planning
+2026-08,AB,ACC,9500.00,Finance Business Owner (FP&A),2026-07-15T14:00:00Z,finance.planning
+2026-08,AB,SVC,37200.00,Finance Business Owner (FP&A),2026-07-15T14:00:00Z,finance.planning

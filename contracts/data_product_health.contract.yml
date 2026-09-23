@@ -1,0 +1,62 @@
+# Health contract for the net_revenue_cad data product.
+# BLOCKING checks prevent the data product from becoming READY; the governed answer path
+# refuses to answer while any blocking check fails. WARNING checks are surfaced only.
+data_product: net_revenue_cad
+data_contract_version: 1.0.0
+owner_role: Data Platform Engineering
+statuses:
+  RUNNING: pipeline in progress; answers are not served from partial data
+  BLOCKED: at least one blocking check failed; answers are refused
+  FAILED: the pipeline itself failed; answers are refused
+  READY: every blocking check passed; governed answers may be served
+parameters:
+  orders_freshness_sla_minutes: 240
+  returns_freshness_sla_minutes: 240
+  accepted_currencies: [CAD, USD]
+  max_category_return_rate_pct: 25
+  volume_anomaly_factor: 3
+checks:
+  - name: ORDERS_FRESHNESS
+    severity: BLOCKING
+    description: Orders extract age at the scenario as-of time must be within the SLA.
+    threshold: "<= 240 minutes"
+  - name: RETURNS_FRESHNESS
+    severity: BLOCKING
+    description: Returns extract age at the scenario as-of time must be within the SLA.
+    threshold: "<= 240 minutes"
+  - name: DUPLICATE_BUSINESS_KEYS
+    severity: BLOCKING
+    description: No order_id or return_id may appear more than once after Silver processing.
+    threshold: "= 0"
+  - name: MISSING_FX
+    severity: BLOCKING
+    description: Every non-CAD order needs a rate for its transaction date.
+    threshold: "= 0"
+  - name: ORPHAN_RETURNS
+    severity: BLOCKING
+    description: Every return must reference a known order.
+    threshold: "= 0"
+  - name: MISSING_DIMENSION_KEYS
+    severity: BLOCKING
+    description: Region and category keys must be present and exist in reference data.
+    threshold: "= 0"
+  - name: UNSUPPORTED_CURRENCY
+    severity: BLOCKING
+    description: Orders and returns must use an accepted currency.
+    threshold: "= 0"
+  - name: DUPLICATES_RESOLVED
+    severity: WARNING
+    description: Superseded duplicate order events discarded by the deduplication policy.
+    threshold: "= 0"
+  - name: QUARANTINED_ROWS
+    severity: WARNING
+    description: Rows excluded by contract quarantine rules (low but nonzero is a warning).
+    threshold: "= 0"
+  - name: HIGH_RETURN_RATE
+    severity: WARNING
+    description: Highest category return rate (percent of gross CAD) across regions.
+    threshold: "<= 25 percent"
+  - name: VOLUME_ANOMALY
+    severity: WARNING
+    description: Region/category days with order volume above 3x their daily average.
+    threshold: "= 0"

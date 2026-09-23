@@ -1,0 +1,34 @@
+# Governed semantic metric. The application and any language model must use this
+# definition as-is; neither may redefine or recalculate it.
+metric: net_revenue_cad
+display_name: Net Revenue CAD
+version: 1.0.0
+status: approved
+owner_role: Finance Business Owner (FP&A)
+steward_role: Data Platform Engineering
+definition: >-
+  Gross order revenue converted to CAD at the transaction-date FX rate, minus accepted
+  returns converted to CAD at the FX rate of the original order transaction date.
+formula: "sum(gross_amount * fx_rate_to_cad) - sum(accepted_return_amount * fx_rate_to_cad)"
+rounding: each converted amount is rounded to 2 decimals (half up) before aggregation
+grain: one row per governed order (gold_fact_sales)
+time_attribution: order transaction date (UTC calendar date)
+dimensions: [date, region, category]
+source_tables: [gold_fact_sales, gold_fact_targets]
+accepted_currencies: [CAD, USD]
+reporting_currency: CAD
+freshness_sla_minutes:
+  orders: 240
+  returns: 240
+quality_requirements:
+  - health status of data product net_revenue_cad must be READY
+  - no duplicate business keys after Silver processing
+  - complete transaction-date FX coverage
+  - no orphan returns
+  - no missing or unknown dimension keys
+  - no unsupported currencies
+security_classification: Confidential
+related_metrics:
+  revenue_target_cad: sum(gold_fact_targets.target_cad), the approved monthly plan by region and category
+  variance_to_target_cad: net_revenue_cad - revenue_target_cad
+data_contract_version: 1.0.0
