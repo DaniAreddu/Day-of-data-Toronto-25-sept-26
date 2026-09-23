@@ -85,3 +85,10 @@ def list_runs(backend: Backend) -> list[PipelineRun]:
 
 def quality_results(backend: Backend) -> list[dict]:
     return backend.query(load_query("quality_results"))
+
+
+def quarantined_rows(backend: Backend) -> list[dict]:
+    return backend.query(
+        "SELECT source_entity, record_key, quarantine_reason, source_system, pipeline_run_id "
+        "FROM silver_quarantine ORDER BY source_entity, record_key"
+    )
