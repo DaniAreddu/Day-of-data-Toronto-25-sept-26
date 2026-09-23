@@ -36,9 +36,9 @@ checks:
     severity: BLOCKING
     description: Every return must reference a known order.
     threshold: "= 0"
-  - name: MISSING_DIMENSION_KEYS
+  - name: MISSING_REQUIRED_KEYS
     severity: BLOCKING
-    description: Region and category keys must be present and exist in reference data.
+    description: order_id, region and category keys must be present; region and category must exist in reference data.
     threshold: "= 0"
   - name: UNSUPPORTED_CURRENCY
     severity: BLOCKING
@@ -58,5 +58,5 @@ checks:
     threshold: "<= 25 percent"
   - name: VOLUME_ANOMALY
     severity: WARNING
-    description: Region/category days with order volume above 3x their daily average.
+    description: Category days with order volume above 3x the category's daily average.
     threshold: "= 0"
