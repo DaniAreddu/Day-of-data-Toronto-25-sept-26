@@ -111,6 +111,17 @@ def ollama() -> OllamaNarrator | None:
     return OllamaNarrator(settings.ollama_url, settings.ollama_model)
 
 
+def clear_answers() -> None:
+    state.raw, state.raw_narration, state.governed = None, None, []
+
+
+def switch_to_duckdb() -> None:
+    """Button callback: runs before the rerun, so it may change the radio's state."""
+    state.backend_name = "duckdb"
+    state.notice = None
+    clear_answers()
+
+
 def safe_health(backend: Backend) -> HealthReport | None:
     try:
         return read_health(backend)
@@ -122,19 +133,17 @@ def safe_health(backend: Backend) -> HealthReport | None:
 # ---------------------------------------------------------------- sidebar
 with st.sidebar:
     st.header("Demo settings")
-    backend_choice = st.radio(
+    st.radio(
         "Backend",
         ["duckdb", "fabric"],
-        index=0 if state.backend_name == "duckdb" else 1,
+        key="backend_name",
+        on_change=clear_answers,
         format_func=lambda b: "DuckDB (offline replica)" if b == "duckdb" else "Fabric (read-only)",
     )
-    if backend_choice != state.backend_name:
-        state.backend_name = backend_choice
-        state.raw, state.raw_narration, state.governed = None, None, []
-    state.narrator = st.radio(
+    st.radio(
         "Narration",
         list(NARRATORS),
-        index=list(NARRATORS).index(state.narrator),
+        key="narrator",
         format_func=lambda n: (
             "Deterministic (no LLM)" if n == "deterministic" else "Ollama (local)"
         ),
@@ -222,10 +231,8 @@ with status_area:
 if state.notice:
     kind, message = state.notice
     (st.error if kind == "error" else st.success)(message)
-    if kind == "error" and not is_local and st.button("Switch to DuckDB", key="btn_switch"):
-        state.backend_name = "duckdb"
-        state.notice = None
-        st.rerun()
+    if kind == "error" and not is_local:
+        st.button("Switch to DuckDB", key="btn_switch", on_click=switch_to_duckdb)
     state.notice = None
 
 # ---------------------------------------------------------------- answers
