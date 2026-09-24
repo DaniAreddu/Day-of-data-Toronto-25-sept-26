@@ -1,0 +1,45 @@
+{
+  "demo_clock_utc": "2026-09-26T18:00:00Z",
+  "description": "Reference figures computed by the generator's independent implementation. Used only by tests and verification; the application never reads this file.",
+  "disclaimer": "A synthetic, production-inspired architecture scenario. It does not represent a real customer deployment.",
+  "files": {
+    "azure-sql/orders.csv": "bf372117573ca6ab301ccfc85b606cb58a43ca5ea592b27efbe2d496ecb80bda",
+    "reference/calendar.csv": "83ce3978fd64f68f6be30adaa1c2a0fee9078cd5d25be764b316c94780305063",
+    "reference/categories.csv": "f4de08a5e55fe4159995c282e3bb34b0f27f49c692e8b84593b724cb0d10e496",
+    "reference/data_contract_metadata.csv": "619cac93604f5872ab0ad6179eedbfec99497bc70580f60417620ba95fadbb7b",
+    "reference/fx_rates.broken.csv": "767494fb5cad4cc2e0a71ba964a4d3f033431b31a751e48c35c2d4d2cb9f6582",
+    "reference/fx_rates.repaired.csv": "beda41a73b2cd548e640729842f3faf1f9672134bf659ea4e601bc9a07c9e763",
+    "reference/regions.csv": "aeb1fdbd8acd9174827f4c9e53ea7cd4afb56f9c767ef31e7724d7231e77e7ba",
+    "reference/targets.csv": "acf7a55281f03bd667ab06a978292151c4a5126d08c0872f9b0f5bbbfa5f508b",
+    "sql-server/returns.broken.csv": "5f2e868a74bb906b267b6bf79cef4fe8803b753cde04f6506a0a68b4c3e9e7c3",
+    "sql-server/returns.repaired.csv": "16279617a45a82dbcb577c64c1898e9ed062e67558f28cd2135aa1ca9efd281e"
+  },
+  "invariants": {
+    "broken_missing_fx_order_count": 3,
+    "broken_returns_freshness_minutes": 3600,
+    "duplicated_order_ids": [
+      "SO-202608-00490"
+    ],
+    "governed_largest_negative_category": "DEV",
+    "ontario_governed_net_revenue_cad": "320475.66",
+    "ontario_governed_variance_by_category": {
+      "ACC": "853.81",
+      "DEV": "-9696.55",
+      "SVC": "1318.40"
+    },
+    "ontario_naive_raw_revenue": "337501.76",
+    "ontario_raw_variance_by_category": {
+      "ACC": "651.12",
+      "DEV": "10526.85",
+      "SVC": "-1676.21"
+    },
+    "ontario_target_cad": "328000.00",
+    "orphan_return_ids": [
+      "RMA-000005"
+    ],
+    "raw_positive_driver": "DEV",
+    "repaired_returns_freshness_minutes": 45
+  },
+  "question": "Did Ontario beat its August 2026 revenue target, and which product category drove the result?",
+  "seed": 20260926
+}

@@ -1,0 +1,67 @@
+// TrustedBusinessMetrics: DAX measures over the governed Gold tables.
+// Home table for all measures: gold_fact_sales (or a dedicated empty measure table).
+// The metric definition lives in Gold (net_revenue_cad is calculated by the pipeline) and in
+// contracts/net_revenue.metric.yml. These measures only aggregate; they never redefine it.
+
+// Format: Currency, 2 decimals, "CAD"
+Gross Revenue CAD =
+SUM ( gold_fact_sales[gross_revenue_cad] )
+
+// Format: Currency, 2 decimals, "CAD"
+Returns CAD =
+SUM ( gold_fact_sales[returns_cad] )
+
+// Format: Currency, 2 decimals, "CAD"
+// Gross revenue converted to CAD at the transaction-date FX rate, minus accepted returns
+// converted at the original order rate (see contracts/net_revenue.metric.yml).
+Net Revenue CAD =
+SUM ( gold_fact_sales[net_revenue_cad] )
+
+// Format: Currency, 2 decimals, "CAD"
+Revenue Target CAD =
+SUM ( gold_fact_targets[target_cad] )
+
+// Format: Currency, 2 decimals, "CAD"
+Variance to Target CAD =
+[Net Revenue CAD] - [Revenue Target CAD]
+
+// Format: Percentage, 2 decimals
+Variance to Target % =
+DIVIDE ( [Variance to Target CAD], [Revenue Target CAD] )
+
+// Format: Text. Category with the most negative variance in the current filter context.
+Largest Negative Category =
+VAR Scored =
+    ADDCOLUMNS (
+        VALUES ( gold_dim_category[category_name] ),
+        "@Variance", [Variance to Target CAD]
+    )
+VAR Negative =
+    FILTER ( Scored, [@Variance] < 0 )
+VAR Worst =
+    TOPN ( 1, Negative, [@Variance], ASC )
+RETURN
+    IF ( ISEMPTY ( Negative ), BLANK (), MAXX ( Worst, gold_dim_category[category_name] ) )
+
+// Format: Date/time "yyyy-mm-dd hh:nn:ss" (values are UTC)
+Latest Refresh UTC =
+CALCULATE (
+    MAX ( gold_data_product_health[last_successful_refresh_utc] ),
+    gold_data_product_health[data_product] = "net_revenue_cad"
+)
+
+// Format: Text (READY, BLOCKED, FAILED, RUNNING)
+Data Product Status =
+CALCULATE (
+    SELECTEDVALUE ( gold_data_product_health[status], "UNKNOWN" ),
+    gold_data_product_health[data_product] = "net_revenue_cad"
+)
+
+// Format: True/False
+Data Is Trusted =
+[Data Product Status] = "READY"
+
+// Optional production pattern: serve the figure only when the data product is trusted.
+// Format: Currency, 2 decimals, "CAD"
+Net Revenue CAD (Trusted) =
+IF ( [Data Is Trusted], [Net Revenue CAD] )

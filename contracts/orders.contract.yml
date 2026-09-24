@@ -1,0 +1,43 @@
+# Source data contract: operational orders (Azure SQL representation).
+# Synthetic, production-inspired scenario. It does not represent a real customer deployment.
+contract: orders
+version: 1.0.0
+owner_role: Sales Operations Data Owner
+source:
+  system: azure_sql.sales
+  represents: Azure SQL Database operational sales system
+  object: sales.orders
+  ddl: source-contracts/azure_sql_orders.sql
+  extract: sample-data/azure-sql/orders.csv
+  delivery: change-data-capture extract (one row per order change event)
+grain: one row per order change event
+business_key: order_id
+deduplication:
+  policy: keep the latest version of each business key
+  partition_by: [order_id]
+  order_by:
+    - event_version DESC
+    - source_updated_at DESC
+    - ingested_at DESC
+    - event_id DESC
+  discarded_rows: recorded in silver_quality_results (DUPLICATES_RESOLVED)
+columns:
+  - {name: order_id, type: "varchar(20)", required: true}
+  - {name: event_id, type: "varchar(24)", required: true}
+  - {name: event_version, type: int, required: true}
+  - {name: order_timestamp_utc, type: "datetime2 (UTC)", required: true}
+  - {name: region_code, type: "char(2)", required: true, references: ref_regions.region_code}
+  - {name: category_code, type: "char(3)", required: true, references: ref_categories.category_code}
+  - {name: currency_code, type: "char(3)", required: true}
+  - {name: gross_amount, type: "decimal(12,2)", required: true}
+  - {name: customer_segment, type: "varchar(20)", required: true}
+  - {name: source_updated_at, type: "datetime2 (UTC)", required: true}
+  - {name: ingested_at, type: "datetime2 (UTC)", required: true}
+accepted_currencies: [CAD, USD]
+freshness_sla_minutes: 240
+quarantine_rules:
+  - code: TEST_TRANSACTION
+    condition: "customer_segment = 'Internal Test'"
+  - code: INVALID_AMOUNT
+    condition: "gross_amount IS NULL OR gross_amount <= 0"
+security_classification: Confidential
