@@ -69,7 +69,6 @@ state.setdefault("narrator", settings.narrator)
 state.setdefault("raw", None)
 state.setdefault("raw_narration", None)
 state.setdefault("governed", [])  # list of (label, result, narration)
-state.setdefault("last_pipeline", None)
 state.setdefault("health_inspected", False)
 state.setdefault("notice", None)
 
@@ -184,7 +183,7 @@ try:
     if clicked_reset:
         result = reset_broken_scenario(backend)
         state.raw, state.raw_narration, state.governed = None, None, []
-        state.last_pipeline, state.health_inspected = None, False
+        state.health_inspected = False
         state.notice = ("success", f"Broken scenario restored ({result.run.pipeline_run_id}).")
     if clicked_raw:
         state.raw = ask_raw(backend)
@@ -199,7 +198,6 @@ try:
             st.write(f"Quality gates evaluated: {len(result.quality_results)} checks")
             st.write(f"Gold published: {result.run.status == 'READY'}")
             box.update(label=f"Pipeline finished: {result.run.status}", state="complete")
-        state.last_pipeline = result.run
         state.health_inspected = True
     if clicked_governed:
         answer = ask_governed(backend)
