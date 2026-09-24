@@ -1,0 +1,25 @@
+# Reference data contract: daily foreign-exchange rates to CAD.
+# Synthetic, production-inspired scenario. Rates are invented and are not market data.
+contract: fx_rates
+version: 1.0.0
+owner_role: Treasury Reference Data Owner
+source:
+  system: treasury.reference.fx
+  extract:
+    broken: sample-data/reference/fx_rates.broken.csv
+    repaired: sample-data/reference/fx_rates.repaired.csv
+grain: one rate per calendar day and currency pair
+business_key: [rate_date, from_currency, to_currency]
+columns:
+  - {name: rate_date, type: date, required: true}
+  - {name: from_currency, type: "char(3)", required: true}
+  - {name: to_currency, type: "char(3)", required: true}
+  - {name: rate, type: "decimal(10,6)", required: true}
+  - {name: published_at_utc, type: "datetime2 (UTC)", required: true}
+  - {name: ingested_at, type: "datetime2 (UTC)", required: true}
+coverage:
+  required: every calendar day with a non-CAD transaction must have a rate
+  base_currency: CAD
+  fallback: none (no nearest-date or previous-day substitution in the pipeline)
+  on_violation: block (MISSING_FX)
+security_classification: Internal

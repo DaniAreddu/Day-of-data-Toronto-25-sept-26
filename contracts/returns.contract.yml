@@ -1,0 +1,40 @@
+# Source data contract: returns (on-premises SQL Server representation).
+# Synthetic, production-inspired scenario. It does not represent a real customer deployment.
+contract: returns
+version: 1.0.0
+owner_role: Customer Service Data Owner
+source:
+  system: sqlserver.returns
+  represents: on-premises SQL Server returns management system
+  object: dbo.returns
+  ddl: source-contracts/sql_server_returns.sql
+  extract:
+    broken: sample-data/sql-server/returns.broken.csv
+    repaired: sample-data/sql-server/returns.repaired.csv
+  delivery: scheduled replication extract
+grain: one row per return
+business_key: return_id
+foreign_keys:
+  - column: order_id
+    references: orders.order_id
+    on_violation: block (ORPHAN_RETURNS)
+columns:
+  - {name: return_id, type: "varchar(20)", required: true}
+  - {name: order_id, type: "varchar(20)", required: true}
+  - {name: return_timestamp_utc, type: "datetime2 (UTC)", required: true}
+  - {name: return_amount, type: "decimal(12,2)", required: true}
+  - {name: currency_code, type: "char(3)", required: true}
+  - {name: return_reason, type: "varchar(40)", required: true}
+  - {name: source_updated_at, type: "datetime2 (UTC)", required: true}
+  - {name: ingested_at, type: "datetime2 (UTC)", required: true}
+accepted_currencies: [CAD, USD]
+acceptance_rules:
+  - a return is accepted when it matches a governed order, uses the order currency and is positive
+  - accepted returns are converted with the FX rate of the original order transaction date
+freshness_sla_minutes: 240
+quarantine_rules:
+  - code: INVALID_RETURN_AMOUNT
+    condition: "return_amount IS NULL OR return_amount <= 0"
+  - code: RETURN_CURRENCY_MISMATCH
+    condition: "returns.currency_code <> orders.currency_code"
+security_classification: Confidential
